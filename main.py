@@ -6,6 +6,11 @@ from pathlib import Path
 import tomllib
 import tomli_w
 
+def main(
+            configure: str,
+         ):
+    print("Hello from clay-pigeon!")
+
 
 
 config_dir = Path.home() / ".config" / "clay-pigeon"
@@ -62,6 +67,5 @@ def timeline():
     # Temporary! Actual logic to print posts coming soon!
     print(profile)
 
-    
 if __name__ == "__main__":
-    app()
+    typer.run(main)
