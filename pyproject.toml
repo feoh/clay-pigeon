@@ -5,8 +5,24 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "atproto>=0.0.65",
-    "cyclopts>=4.18.0",
-    "rich>=15.0.0",
-    "tomli-w>=1.2.0",
+  "atproto>=0.0.65",
+  "cyclopts>=4.18.0",
+  "rich>=15.0.0",
+  "tomli-w>=1.2.0",
+]
+
+[project.scripts]
+clay-pigeon = "clay_pigeon.cli:main"
+
+[tool.mypy]
+mypy_path = "stubs"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.1.0",
+    "pre-commit>=4.6.0",
 ]

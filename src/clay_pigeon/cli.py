@@ -1,19 +1,18 @@
-import atproto
-from rich.prompt import Prompt
-from rich import print
 from pathlib import Path
 import tomllib
+
+import atproto
 import tomli_w
 from cyclopts import App
+from rich import print
+from rich.prompt import Prompt
 
 app = App()
 
-@app.default
-def hello(
-            configure: str,
-         ):
-    print("Hello from clay-pigeon!")
 
+@app.default
+def hello() -> None:
+    print("Hello from clay-pigeon!")
 
 
 config_dir = Path.home() / ".config" / "clay-pigeon"
@@ -26,20 +25,24 @@ def get_client():
     client: atproto.Client = atproto.Client()
     return client
 
-def get_config() -> dict[str,str]:
-    with open(config_file,"rb") as cf:
-        config_dict = tomllib.load(cf)
-        return config_dict
+
+def get_config() -> dict[str, str]:
+    try:
+        with open(config_file, "rb") as cf:
+            config_dict = tomllib.load(cf)
+            return config_dict
+    except FileNotFoundError:
+        print("[red]No configuration found. Run `clay-pigeon configure` first.[/red]")
+        raise
 
 
 def get_profile():
     client = get_client()
     config_dict = get_config()
-    bluesky_username = config_dict['username']
-    bluesky_password = config_dict['password']
+    bluesky_username = config_dict["username"]
+    bluesky_password = config_dict["password"]
     profile = client.login(bluesky_username, bluesky_password)
     return profile
-    
 
 
 """
@@ -47,25 +50,38 @@ configure: Write clay-pigeon configuration file
 
 Note: Since users are explicitly asking for this, we overwrite existing configurations.
 """
+
+
 @app.command
 def configure():
     bluesky_username = Prompt.ask("[blue]Bluesky Username[/blue]")
     bluesky_password = Prompt.ask("[red]Bluesky Password[/red]", password=True)
 
-    claypigeon_config = { "username": bluesky_username, "password": bluesky_password }
+    claypigeon_config = {"username": bluesky_username, "password": bluesky_password}
 
-    with open(config_file, "wb") as f:
-        tomli_w.dump(claypigeon_config, f)
+    try:
+        with open(config_file, "wb") as f:
+            tomli_w.dump(claypigeon_config, f)
+    except OSError as error:
+        print(f"[red]Unable to write configuration: {error}[/red]")
+        raise
 
 
 """
 timeline: Diaplay user's timeline
 """
+
+
 @app.command
 def timeline():
-    client = get_client()
     profile = get_profile()
     # Temporary! Actual logic to print posts coming soon!
     print(profile)
 
-app()
+
+def main() -> None:
+    app()
+
+
+if __name__ == "__main__":
+    main()
