@@ -5,14 +5,19 @@ import atproto
 import tomli_w
 from cyclopts import App
 from rich import print
+from rich.pretty import pprint
 from rich.prompt import Prompt
 
 app = App()
 
 
 @app.default
-def hello() -> None:
-    print("Hello from clay-pigeon!")
+def display_profile():
+    detailed_profile: atproto.models.AppBskyActorDefs.ProfileViewDetailed = get_profile()
+    pprint(detailed_profile)
+    print(f"[blue]Display Name:  [red]{detailed_profile.display_name}")
+    
+
 
 
 config_dir = Path.home() / ".config" / "clay-pigeon"
@@ -42,6 +47,7 @@ def get_profile():
     bluesky_username = config_dict["username"]
     bluesky_password = config_dict["password"]
     profile = client.login(bluesky_username, bluesky_password)
+
     return profile
 
 
@@ -70,13 +76,6 @@ def configure():
 """
 timeline: Diaplay user's timeline
 """
-
-
-@app.command
-def timeline():
-    profile = get_profile()
-    # Temporary! Actual logic to print posts coming soon!
-    print(profile)
 
 
 def main() -> None:
