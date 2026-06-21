@@ -1,12 +1,15 @@
-import typer
 import atproto
 from rich.prompt import Prompt
 from rich import print
 from pathlib import Path
 import tomllib
 import tomli_w
+from cyclopts import App
 
-def main(
+app = App()
+
+@app.default
+def hello(
             configure: str,
          ):
     print("Hello from clay-pigeon!")
@@ -17,8 +20,6 @@ config_dir = Path.home() / ".config" / "clay-pigeon"
 config_dir.mkdir(parents=True, exist_ok=True)
 config_file_path = config_dir / "config.toml"
 config_file = str(config_file_path)
-
-app = typer.Typer(no_args_is_help=True)
 
 
 def get_client():
@@ -46,7 +47,7 @@ configure: Write clay-pigeon configuration file
 
 Note: Since users are explicitly asking for this, we overwrite existing configurations.
 """
-@app.command()
+@app.command
 def configure():
     bluesky_username = Prompt.ask("[blue]Bluesky Username[/blue]")
     bluesky_password = Prompt.ask("[red]Bluesky Password[/red]", password=True)
@@ -60,12 +61,11 @@ def configure():
 """
 timeline: Diaplay user's timeline
 """
-@app.command()
+@app.command
 def timeline():
     client = get_client()
     profile = get_profile()
     # Temporary! Actual logic to print posts coming soon!
     print(profile)
 
-if __name__ == "__main__":
-    typer.run(main)
+app()
