@@ -14,29 +14,18 @@ from rich.panel import Panel
 app = App()
 
 
-@app.default
+@app.command
 def display_profile():
     detailed_profile: atproto.models.AppBskyActorDefs.ProfileViewDetailed = get_profile()
     grid = Table.grid(expand=True)
-    grid.add_column(style="red")
-    grid.add_column(justify="right")
+    grid.add_column(style="red", justify="left")
+    grid.add_column(justify="full")
 
     grid.add_row("Display Name", detailed_profile.display_name)
     grid.add_row("Handle", detailed_profile.handle)
-    print(Panel(grid))
+    grid.add_row("Description", detailed_profile.description)
+    print(Panel(grid, title="User Profile Information"))
     
-
-
-
-
-    
-
-
-
-config_dir = Path.home() / ".config" / "clay-pigeon"
-config_dir.mkdir(parents=True, exist_ok=True)
-config_file_path = config_dir / "config.toml"
-config_file = str(config_file_path)
 
 
 def get_client():
@@ -73,6 +62,12 @@ Note: Since users are explicitly asking for this, we overwrite existing configur
 
 @app.command
 def configure():
+
+    config_dir = Path.home() / ".config" / "clay-pigeon"
+    config_dir.mkdir(parents=True, exist_ok=True)
+    config_file_path = config_dir / "config.toml"
+    config_file = str(config_file_path)
+
     bluesky_username = Prompt.ask("[blue]Bluesky Username[/blue]")
     bluesky_password = Prompt.ask("[red]Bluesky Password[/red]", password=True)
 
@@ -92,6 +87,7 @@ timeline: Diaplay user's timeline
 
 
 def main() -> None:
+
     app()
 
 
