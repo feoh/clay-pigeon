@@ -7,6 +7,9 @@ from cyclopts import App
 from rich import print
 from rich.pretty import pprint
 from rich.prompt import Prompt
+from rich.console import Group
+from rich.table import Table
+from rich.panel import Panel
 
 app = App()
 
@@ -14,8 +17,18 @@ app = App()
 @app.default
 def display_profile():
     detailed_profile: atproto.models.AppBskyActorDefs.ProfileViewDetailed = get_profile()
-    pprint(detailed_profile)
-    print(f"[blue]Display Name:  [red]{detailed_profile.display_name}")
+    grid = Table.grid(expand=True)
+    grid.add_column(style="red")
+    grid.add_column(justify="right")
+
+    grid.add_row("Display Name", detailed_profile.display_name)
+    grid.add_row("Handle", detailed_profile.handle)
+    print(Panel(grid))
+    
+
+
+
+
     
 
 
