@@ -33,9 +33,16 @@ def get_client():
     return client
 
 
+def get_config_file_path() -> str:
+    config_dir = Path.home() / ".config" / "clay-pigeon"
+    config_file_path = str(config_dir / "config.toml")
+    return config_file_path
+
+
 def get_config() -> dict[str, str]:
+    config_file_path = get_config_file_path()
     try:
-        with open(config_file, "rb") as cf:
+        with open(config_file_path, "rb") as cf:
             config_dict = tomllib.load(cf)
             return config_dict
     except FileNotFoundError:
@@ -65,8 +72,7 @@ def configure():
 
     config_dir = Path.home() / ".config" / "clay-pigeon"
     config_dir.mkdir(parents=True, exist_ok=True)
-    config_file_path = config_dir / "config.toml"
-    config_file = str(config_file_path)
+    config_file = str(config_dir / "config.toml")
 
     bluesky_username = Prompt.ask("[blue]Bluesky Username[/blue]")
     bluesky_password = Prompt.ask("[red]Bluesky Password[/red]", password=True)
