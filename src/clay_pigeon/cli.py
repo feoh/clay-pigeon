@@ -24,6 +24,8 @@ def display_profile():
     grid.add_row("Display Name", detailed_profile.display_name)
     grid.add_row("Handle", detailed_profile.handle)
     grid.add_row("Description", detailed_profile.description)
+    grid.add_row("Following", str(detailed_profile.follows_count))
+    grid.add_row("Followers", str(detailed_profile.followers_count))
     print(Panel(grid, title="User Profile Information"))
     
 
