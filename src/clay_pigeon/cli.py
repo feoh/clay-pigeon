@@ -13,6 +13,14 @@ from rich.panel import Panel
 
 app = App()
 
+@app.command
+def timeline():
+    timeline = get_timeline()
+    for feed_view in timeline.feed:
+        post = feed_view.post.record
+        pprint(post)
+
+    
 
 @app.command
 def display_profile():
@@ -35,6 +43,14 @@ def get_client():
     return client
 
 
+def get_logged_in_client():
+    client = get_client()
+    config_dict = get_config()
+    bluesky_username = config_dict["username"]
+    bluesky_password = config_dict["password"]
+    client.login(bluesky_username, bluesky_password)
+    return client
+
 def get_config_file_path() -> str:
     config_dir = Path.home() / ".config" / "clay-pigeon"
     config_file_path = str(config_dir / "config.toml")
@@ -52,11 +68,12 @@ def get_config() -> dict[str, str]:
         raise
 
 
+def get_timeline():
+    client = get_logged_in_client()
+    return client.get_timeline(algorithm='reverse-chronological')
+
+
 def get_profile():
-    client = get_client()
-    config_dict = get_config()
-    bluesky_username = config_dict["username"]
-    bluesky_password = config_dict["password"]
     profile = client.login(bluesky_username, bluesky_password)
 
     return profile
